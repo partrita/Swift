@@ -1,11 +1,11 @@
-// A palindrome is a string that reads the same forwards and backwards.
+// 회문은 앞에서부터 읽으나 뒤에서부터 읽으나 동일한 문자열입니다.
 //
-// Examples: "level", "radar", "madam", "A man, a plan, a canal: Panama".
+// 예시: "level", "radar", "madam", "A man, a plan, a canal: Panama".
 
 extension String {
     
-    /// Iteratively comparing characters from the beginning and end of the string. Only include letters and numbers.
-    /// - Complexity: O(n), without allocating new space.
+    /// 문자열의 시작과 끝에서 문자를 반복적으로 비교합니다. 문자 및 숫자만 포함합니다.
+    /// - 복잡도: O(n), 새로운 공간을 할당하지 않음.
     func isPalindrome() -> Bool {
         var leftIndex = startIndex
         var rightIndex = index(before: endIndex)

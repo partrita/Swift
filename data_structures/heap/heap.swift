@@ -10,23 +10,23 @@ struct Heap<Element> {
         }
     }
 
-    /// The minimum item on this heap or nil if the heap is empty
+    /// 이 힙의 최소 항목이거나 힙이 비어 있으면 nil입니다.
     var min: Element? {
         return items.first
     }
 
-    /// The number of items on this heap
+    /// 이 힙의 항목 수
     var count: Int {
         return items.count
     }
 
-    /// true if this heap is empty
+    /// 이 힙이 비어 있으면 true
     var isEmpty: Bool {
         return items.isEmpty
     }
 
-    /// Removes and returns the minimum item from the heap.
-    /// - returns: The minimum item from the heap or nil if the heap is empty.
+    /// 힙에서 최소 항목을 제거하고 반환합니다.
+    /// - 반환값: 힙의 최소 항목이거나 힙이 비어 있으면 nil입니다.
     mutating func extractMin() -> Element? {
         guard let result = items.first else { return nil }
 
@@ -36,8 +36,8 @@ struct Heap<Element> {
 
     }
 
-    /// Inserts a new item into this heap
-    /// - parameter item: The new item to insert
+    /// 이 힙에 새 항목을 삽입합니다.
+    /// - 매개변수 item: 삽입할 새 항목
     mutating func insert(item : Element) {
         items.append(item)
         var i = items.count - 1
@@ -47,8 +47,8 @@ struct Heap<Element> {
         }
     }
 
-    /// Restores the heap property starting at a given index
-    /// - parameter index: The index to start at
+    /// 지정된 인덱스에서 시작하여 힙 속성을 복원합니다.
+    /// - 매개변수 index: 시작할 인덱스
     private mutating func heapify(_ index : Int) {
         var minimumIndex = index
         if left(index) < count && compare(items[left(index)], items[minimumIndex]) {
@@ -65,17 +65,17 @@ struct Heap<Element> {
         }
     }
 
-    /// Returns the index of the left child of an item
+    /// 항목의 왼쪽 자식 인덱스를 반환합니다.
     private func left(_ index : Int) -> Int {
         return 2 * index + 1
     }
 
-    /// Returns the index of the right child of an item
+    /// 항목의 오른쪽 자식 인덱스를 반환합니다.
     private func right(_ index: Int) -> Int {
         return 2 * index + 2
     }
 
-    /// Returns the index of the parent of an item
+    /// 항목의 부모 인덱스를 반환합니다.
     private func parent(_ index: Int) -> Int {
         return (index - 1) / 2
     }

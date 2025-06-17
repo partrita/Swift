@@ -24,7 +24,7 @@ public struct Stack<T> {
     }
 }
 
-// The code below can be used for testing
+// 아래 코드는 테스트용으로 사용할 수 있습니다.
 
 var stack = Stack<Int>()
 

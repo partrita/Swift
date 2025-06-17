@@ -1,11 +1,11 @@
 public struct Board {
-    // MARK: -- Public variable's
+    // MARK: -- 공개 변수
     public var size: Int
 
-    // MARK: -- Private variable's
+    // MARK: -- 비공개 변수
     private var table: [ [PlayerSymbol?] ]
 
-    // MARK: -- Public function's
+    // MARK: -- 공개 함수
     public init(size: Int) {
         self.size = size
         self.table = []
@@ -49,7 +49,7 @@ public struct Board {
         if self.hasEmptyField() { return BoardStatus.continues } else { return BoardStatus.draw }
     }
 
-    // MARK: -- Private function's
+    // MARK: -- 비공개 함수
     private func foundWinInRows(_ playerSymbol: PlayerSymbol) -> Bool {
         for i in 0 ..< self.size {
             var theSameSymbolsInRowCount = 0

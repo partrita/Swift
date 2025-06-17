@@ -15,13 +15,12 @@ public func binarySearch<T: Comparable>(_ a: [T], key: T) -> Int? {
     }
     return nil
 }
-// The code below can be used for testing
+// 아래 코드는 테스트용으로 사용할 수 있습니다.
 
 // var numbers = [7, 10, 13, 17, 19, 24, 29, 31, 32, 37, 41, 43, 47, 51, 53, 119, 163, 611, 627]
 // if let searchIndex = binarySearch(numbers, key: 10) {
-//     print("Element found on index: \(searchIndex)")
+//     print("요소를 다음 인덱스에서 찾았습니다: \(searchIndex)")
 // }
 // else {
-// print("Element not found")
+// print("요소를 찾을 수 없습니다")
 // }
-

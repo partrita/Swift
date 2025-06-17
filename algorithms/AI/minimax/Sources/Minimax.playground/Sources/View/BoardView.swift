@@ -1,13 +1,13 @@
 import UIKit
 
 public class BoardView: UIView {
-    // MARK: -- Public
+    // MARK: -- 공개
     public var gameModel: GameModel!
 
     public var players = [Player(type: .human, symbol: .circle),
                           Player(type: .computer, symbol: .cross)]
 
-    // MARK: -- Override's
+    // MARK: -- 재정의
     public override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -21,7 +21,7 @@ public class BoardView: UIView {
         super.init(coder: coder)
     }
 
-    // MARK: -- Private
+    // MARK: -- 비공개
     private var buttons: [UIButton] = []
 
     private var stackView: UIStackView!
@@ -45,10 +45,10 @@ public class BoardView: UIView {
 
     private func updateUI() {
         if gameModel.gameStatus != BoardStatus.continues {
-            self.resetButton.setTitle("New game", for: .normal)
+            self.resetButton.setTitle("새 게임", for: .normal)
             blockButtons()
         } else {
-            self.resetButton.setTitle("Reset", for: .normal)
+            self.resetButton.setTitle("리셋", for: .normal)
         }
         boardToButtons()
     }
@@ -83,7 +83,7 @@ public class BoardView: UIView {
             self.stackView.addArrangedSubview(boardRow)
         }
 
-        // constraints
+        // 제약 조건
         let constraints = [
             self.stackView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
             self.stackView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
@@ -155,13 +155,13 @@ public class BoardView: UIView {
     private func setupResetButton() {
         self.resetButton = UIButton(type: .system)
         self.resetButton.translatesAutoresizingMaskIntoConstraints = false
-        self.resetButton.setTitle("Reset", for: .normal)
+        self.resetButton.setTitle("리셋", for: .normal)
         self.resetButton.backgroundColor = .lightGray
         self.resetButton.addTarget(self, action: #selector(resetButtonPressed(_:)), for: .touchUpInside)
 
         self.addSubview(self.resetButton)
 
-        // constraints
+        // 제약 조건
         let constraints = [
             self.resetButton.topAnchor.constraint(equalTo: self.stackView.bottomAnchor, constant: 10),
             self.resetButton.bottomAnchor.constraint(equalTo: self.bottomAnchor),
@@ -183,7 +183,7 @@ public class BoardView: UIView {
 
         self.addSubview(self.indicator)
 
-        // constraints
+        // 제약 조건
         let constraints = [
             self.indicator.topAnchor.constraint(equalTo: self.stackView.bottomAnchor, constant: 10),
             self.indicator.bottomAnchor.constraint(equalTo: self.bottomAnchor),

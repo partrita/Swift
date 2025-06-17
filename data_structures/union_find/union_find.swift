@@ -46,14 +46,14 @@ func testUnionFind() {
     print("b, c", UnionFindNode.inSameSet(b, c))
     print("a, c", UnionFindNode.inSameSet(a, c))
 
-    print("Joining a, b")
+    print("a, b 결합 중")
 
     UnionFindNode.union(a, b)
     print("a, b", UnionFindNode.inSameSet(a, b))
     print("b, c", UnionFindNode.inSameSet(b, c))
     print("a, c", UnionFindNode.inSameSet(a, c))
 
-    print("Joining b, c")
+    print("b, c 결합 중")
 
     UnionFindNode.union(b, c)
     print("a, b", UnionFindNode.inSameSet(a, b))
@@ -61,12 +61,12 @@ func testUnionFind() {
     print("a, c", UnionFindNode.inSameSet(a, c))
 
 
-    print("New node d")
+    print("새 노드 d")
     let d = UnionFindNode()
 
     print("a, d", UnionFindNode.inSameSet(a, d))
 
-    print("Joining d, c")
+    print("d, c 결합 중")
     UnionFindNode.union(d, c)
     print("a, d", UnionFindNode.inSameSet(a, d))
 

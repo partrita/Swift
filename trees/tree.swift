@@ -16,8 +16,8 @@ public class TreeNode<T> {
     }
 }
 
-/* Checks the node's value property, if there is no match, check the child nodes.
-Repeat the same process recursively */
+/* 노드의 값 속성을 확인하고, 일치하는 항목이 없으면 자식 노드를 확인합니다.
+동일한 과정을 재귀적으로 반복합니다. */
 extension TreeNode where T: Equatable {
     func search(_ value: T) -> TreeNode? {
         if value == self.value {
@@ -32,7 +32,7 @@ extension TreeNode where T: Equatable {
     }
 }
 
-// The code below can be used for testing
+// 아래 코드는 테스트용으로 사용할 수 있습니다.
 let tree = TreeNode<String>(value: "animals")
 
 let reptilesNode = TreeNode<String>(value: "reptiles")

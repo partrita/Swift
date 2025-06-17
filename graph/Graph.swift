@@ -97,13 +97,13 @@ func test<G: Graph>(_ message: String, _ list: [GraphEdge<G>]?) {
             print(edge)
         }
     } else {
-        print("Not found")
+        print("찾을 수 없음")
     }
     print("")
 }
 
-test("Depth-first a -> d", graph.depthFirstSearch(start: "a", destination: "d"))
-test("Depth-first a -> e", graph.depthFirstSearch(start: "a", destination: "e"))
+test("깊이 우선 a -> d", graph.depthFirstSearch(start: "a", destination: "d"))
+test("깊이 우선 a -> e", graph.depthFirstSearch(start: "a", destination: "e"))
 
-test("Breadth-first a -> d", graph.breadthFirstSearch(start: "a", destination: "d"))
-test("Breadth-first a -> e", graph.breadthFirstSearch(start: "a", destination: "e"))
+test("너비 우선 a -> d", graph.breadthFirstSearch(start: "a", destination: "d"))
+test("너비 우선 a -> e", graph.breadthFirstSearch(start: "a", destination: "e"))

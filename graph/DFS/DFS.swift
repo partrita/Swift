@@ -1,4 +1,4 @@
-// MARK: - Basic requirement
+// MARK: - 기본 요구 사항
 struct Edge {
     let from: Int
     let to: Int
@@ -13,7 +13,7 @@ public class Node {
     }
 }
 
-// MARK: - DFS Recursion
+// MARK: - DFS 재귀
 func dfs(vertex: Int, visited: inout [Bool], graph: [Int: Node]) {
     if visited[vertex] == true {
         return
@@ -45,7 +45,7 @@ func testDFS(edges: [Edge]) {
 }
 
 
-// MARK: - setup
+// MARK: - 설정
 func setup() {
     let edges = [
         Edge(from: 1, to: 2),

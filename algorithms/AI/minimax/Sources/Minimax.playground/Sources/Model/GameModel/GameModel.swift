@@ -1,12 +1,12 @@
 import Foundation
 
 public class GameModel {
-    // MARK: -- Public variable's
+    // MARK: -- 공개 변수
     public var board: Board!
 
     public var gameStatus: BoardStatus
 
-    // MARK: -- Private variable's
+    // MARK: -- 비공개 변수
     private var playersList: [Player]!
 
     private var movementsSequence: [Int]!
@@ -21,7 +21,7 @@ public class GameModel {
 
     private var difficultLevel: DifficultLevel = DifficultLevel.hard
 
-    // MARK: -- Public function's
+    // MARK: -- 공개 함수
     public init(boardSize: Int, playersList: [Player], difficultLevel: DifficultLevel) {
         self.board = Board.init(size: boardSize)
         self.playersList = playersList
@@ -70,7 +70,7 @@ public class GameModel {
         changeActualPlayer()
     }
 
-    // MARK: -- Private function's
+    // MARK: -- 비공개 함수
     private func generateMovementsSequence() {
         self.movementsSequence = []
 

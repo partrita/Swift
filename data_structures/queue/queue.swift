@@ -1,4 +1,4 @@
-// Create simple queue
+// 간단한 큐 생성
 // Tejas Nanaware
 
 struct Queue<T> {

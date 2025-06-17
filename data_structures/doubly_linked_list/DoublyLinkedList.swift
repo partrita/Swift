@@ -160,13 +160,13 @@ public struct DoublyLinkedList<Value> {
 extension DoublyLinkedList: CustomStringConvertible {
     public var description: String {
         guard let head: Node<Value> = self.head else {
-          return "Empty list"
+          return "빈 리스트"
         }
         return String(describing: head)
       }
 }
 
-// Here are testing scenarios to run in a Swift playground
+// 다음은 스위프트 플레이그라운드에서 실행할 테스트 시나리오입니다.
 
 /*
 var list = DoublyLinkedList<Int>()

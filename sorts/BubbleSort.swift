@@ -22,7 +22,7 @@ func swap<T: Comparable>(left: inout T, right: inout T) {
     left = temp
 }
 
-// The code below can be used for testing
+// 아래 코드는 테스트용으로 사용할 수 있습니다.
 
 // let numberList : Array<Int> = [8, 2, 10, 9, 7, 5]
 // let results: Array<Int> = numberList.bubbleSort()

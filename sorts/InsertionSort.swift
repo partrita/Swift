@@ -19,7 +19,7 @@ func insertionSort<T>(_ array: [T], by comparison: (T, T) -> Bool) -> [T] {
     return sortedArray
 }
 
-// The code below can be used for testing
+// 아래 코드는 테스트용으로 사용할 수 있습니다.
 
 /*
 let numbers = [10, 1, 3, 8, 4, 2]

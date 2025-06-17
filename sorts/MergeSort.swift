@@ -1,4 +1,3 @@
-
 import Foundation
 
 extension Array where Element: Comparable {
@@ -62,7 +61,7 @@ extension Array where Element: Comparable {
 	
 }
 
-// The code below can be used for testing
+// 아래 코드는 테스트용으로 사용할 수 있습니다.
 // var numberList = [15, 2, 23, 11, 3, 9]
 // debugPrint(numberList.mergeSorted(by: >))
 // numberList.mergeSort(by: <)

@@ -1,5 +1,5 @@
 class Node : CustomStringConvertible {
-    // unique identifier required for each node
+    // 각 노드에 필요한 고유 식별자
     var identifier : Int
     var distance : Int = Int.max
     var edges = [Edge]()
@@ -23,7 +23,7 @@ class Node : CustomStringConvertible {
 }
 
 class Edge {
-    var from: Node // does not actually need to be stored!
+    var from: Node // 실제로 저장할 필요는 없습니다!
     var to: Node
     var weight: Int
     var description : String {
@@ -42,19 +42,19 @@ class Graph {
 }
 
 
-// Complete the quickestWayUp function below.
+// 아래 quickestWayUp 함수를 완성하세요.
 func setupGraphwith(edges: [[Int]]) -> Graph {
     let graph = Graph()
     
-    // create all the nodes
-    // The first and last node need to be included, so need nodes from "to" and "from"
+    // 모든 노드 생성
+    // 첫 번째와 마지막 노드를 포함해야 하므로 "to"와 "from"의 노드가 필요합니다.
     let nodeNames = Set ( edges.map{ $0[0] } + edges.map{ $0[1]} )
     for node in nodeNames {
         let newNode = Node(visited: false, identifier: node, edges: [])
         graph.nodes.append(newNode)
     }
     
-    // create all the edges to link the nodes
+    // 노드를 연결하기 위한 모든 간선 생성
     for edge in edges {
         if let fromNode = graph.nodes.first(where: { $0.identifier == edge[0] }) {
             if let toNode = graph.nodes.first(where: { $0.identifier == edge[1] }) {
@@ -76,7 +76,7 @@ func shortestPath (source: Int, destination: Int, graph: Graph) -> Int {
     while ( !toVisit.isEmpty) {
         toVisit = toVisit.filter{ $0.identifier != currentNode.identifier }
         currentNode.visited = true
-        // Go to each adjacent vertex and update the path length
+        // 각 인접 정점으로 이동하여 경로 길이 업데이트
         for connectedEdge in currentNode.edges {
             let dist = currentNode.distance + connectedEdge.weight
             
@@ -92,7 +92,7 @@ func shortestPath (source: Int, destination: Int, graph: Graph) -> Int {
         }
         
         currentNode.visited = true
-        //set current node to the smallest vertex
+        // 현재 노드를 가장 작은 정점으로 설정
         if !toVisit.isEmpty {
             currentNode = toVisit.min(by: { (a, b) -> Bool in
                 return a.distance < b.distance

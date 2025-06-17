@@ -1,4 +1,4 @@
-// MARK: - Basic requirement
+// MARK: - 기본 요구 사항
 struct Edge {
     let from: Int
     let to: Int
@@ -13,7 +13,7 @@ public class Node {
     }
 }
 
-// MARK: - BFS implementation
+// MARK: - BFS 구현
 func testBFS(edges: [Edge]) {
     
     var graph = [Int: Node]()
@@ -54,7 +54,7 @@ func testBFS(edges: [Edge]) {
     }
 }
 
-// MARK: - Input Graph
+// MARK: - 입력 그래프
 func setup() {
     let edges = [
         Edge(from: 1, to: 2),

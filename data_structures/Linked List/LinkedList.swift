@@ -117,18 +117,18 @@ public struct LinkedList<Value> {
 extension LinkedList: CustomStringConvertible {
     public var description: String {
         guard let head = head else {
-          return "Empty list"
+          return "빈 리스트"
         }
         return String(describing: head)
       }
 }
 
-// Below you can find a testing Scenario for Playground.
+// 아래에서 플레이그라운드용 테스트 시나리오를 찾을 수 있습니다.
 
 /*
  import UIKit
 
- // Test Linked List
+ // 연결 리스트 테스트
 
  let node1 = Node(value: 1)
  let node2 = Node(value: 2)

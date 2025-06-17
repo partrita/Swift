@@ -31,7 +31,7 @@ func selectionSort() -> Array<Element> {
     }
 }
 
-// The code below can be used for testing
+// 아래 코드는 테스트용으로 사용할 수 있습니다.
 
 // let numberList : Array<Int> = [15, 2, 23, 11, 3, 9]
 // let results: Array<Int> = numberList.selectionSort()
