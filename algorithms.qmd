@@ -1,0 +1,1293 @@
+---
+title: "알고리즘"
+---
+
+### 인공지능 (AI)
+
+인공지능 관련 알고리즘입니다.
+
+#### 미니맥스 (Minimax)
+
+게임 이론에서 사용되는 의사 결정 알고리즘으로, 상대방이 최선을 다한다는 가정하에 자신의 손실을 최소화합니다.
+
+##### Resources
+
+##### Sources
+
+###### Minimax.Playground
+
+**Contents**
+
+```swift
+import UIKit
+import PlaygroundSupport
+
+let boardSize = CGSize(width: 500, height: 550)
+let boardView = BoardView(frame: CGRect(origin: .zero, size: boardSize))
+
+PlaygroundPage.current.needsIndefiniteExecution = true
+PlaygroundPage.current.liveView = boardView
+
+```
+
+###### Sources
+
+###### Model
+
+###### Board
+
+**Board**
+
+```swift
+public struct Board {
+    // MARK: -- Public variable's
+    public var size: Int
+
+    // MARK: -- Private variable's
+    private var table: [ [PlayerSymbol?] ]
+
+    // MARK: -- Public function's
+    public init(size: Int) {
+        self.size = size
+        self.table = []
+        self.clear()
+    }
+
+    public mutating func clear() {
+        self.table = Array(repeating: Array(repeating: PlayerSymbol.empty, count: size), count: size)
+    }
+
+    public func hasEmptyField() -> Bool {
+        for i in 0 ..< self.size {
+            for j in 0 ..< self.size {
+                if self.table[i][j] == PlayerSymbol.empty {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    public func symbol(forPosition position: Position) -> PlayerSymbol? {
+        guard position.row < self.size, position.column < size else { return nil }
+        return self.table[position.row][position.column]
+    }
+
+    public mutating func makeMove(player: Player, position: Position) {
+        guard self.symbol(forPosition: position) == PlayerSymbol.empty else { return }
+        guard self.symbol(forPosition: position) != player.symbol else { return }
+
+        self.table[position.row][position.column] = player.symbol
+    }
+
+    public func check(player: Player) -> BoardStatus {
+        let playerSymbol: PlayerSymbol = player.symbol
+
+        if self.foundWinInRows(playerSymbol) { return BoardStatus.win }
+        if self.foundWinInColumns(playerSymbol) { return BoardStatus.win }
+        if self.foundWinInSlants(playerSymbol) { return BoardStatus.win }
+
+        if self.hasEmptyField() { return BoardStatus.continues } else { return BoardStatus.draw }
+    }
+
+    // MARK: -- Private function's
+    private func foundWinInRows(_ playerSymbol: PlayerSymbol) -> Bool {
+        for i in 0 ..< self.size {
+            var theSameSymbolsInRowCount = 0
+
+            for j in 0 ..< self.size - 1 {
+                if self.table[i][j] == self.table[i][j+1] && (self.table[i][j] == playerSymbol) {
+                    theSameSymbolsInRowCount += 1
+                } else {
+                    theSameSymbolsInRowCount = 0
+                }
+            }
+
+            if theSameSymbolsInRowCount == self.size - 1 {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private func foundWinInColumns(_ playerSymbol: PlayerSymbol) -> Bool {
+        for j in 0 ..< self.size {
+            var theSameSymbolsInColumnCount = 0
+
+            for i in 0 ..< self.size - 1 {
+                if self.table[i][j] == self.table[i+1][j] && (self.table[i][j] == playerSymbol) {
+                    theSameSymbolsInColumnCount += 1
+                } else {
+                    theSameSymbolsInColumnCount = 0
+                }
+            }
+
+            if theSameSymbolsInColumnCount == self.size - 1 {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private func foundWinInSlants(_ playerSymbol: PlayerSymbol) -> Bool {
+        var theSameSymbolsInSlantCount = 0
+
+        for i in 0 ..< self.size {
+            for j in -(self.size - 1) ... 0 {
+                if(self.table[-j][i] == playerSymbol) {
+                    var k: Int = -j
+                    var l: Int = i
+                    theSameSymbolsInSlantCount = 0
+
+                    while l < self.size && k >= 0 {
+                        if self.table[k][l] == playerSymbol {
+                            theSameSymbolsInSlantCount += 1
+                        } else {
+                            theSameSymbolsInSlantCount = 0
+                        }
+                        k -= 1
+                        l += 1
+
+                        if theSameSymbolsInSlantCount == self.size {
+                            return true
+                        }
+                    }
+                    theSameSymbolsInSlantCount = 0
+                }
+                theSameSymbolsInSlantCount = 0
+            }
+            theSameSymbolsInSlantCount = 0
+        }
+
+        theSameSymbolsInSlantCount = 0
+
+        for i in 0 ..< self.size {
+            for j in 0 ..< self.size {
+                if(self.table[j][i] == playerSymbol) {
+                    var k: Int = j
+                    var l: Int = i
+                    theSameSymbolsInSlantCount = 0
+
+                    while l < self.size && k < self.size {
+                        if self.table[k][l] == playerSymbol {
+                            theSameSymbolsInSlantCount += 1
+                        } else {
+                            theSameSymbolsInSlantCount = 0
+                        }
+                        k += 1
+                        l += 1
+
+                        if theSameSymbolsInSlantCount == self.size {
+                            return true
+                        }
+                    }
+                    theSameSymbolsInSlantCount = 0
+                }
+                theSameSymbolsInSlantCount = 0
+            }
+            theSameSymbolsInSlantCount = 0
+        }
+
+        return false
+    }
+}
+
+```
+
+**Boardposition**
+
+```swift
+public typealias Position = (row: Int, column: Int)
+
+```
+
+**Boardstatus**
+
+```swift
+public enum BoardStatus {
+
+    case continues
+
+    case win
+
+    case draw
+}
+
+```
+
+###### Gamemodel
+
+**Difficultlevel**
+
+```swift
+public enum DifficultLevel: Int {
+
+    case easy = 2
+
+    case medium = 3
+
+    case hard = 5
+}
+
+```
+
+**Gamemodel**
+
+```swift
+import Foundation
+
+public class GameModel {
+    // MARK: -- Public variable's
+    public var board: Board!
+
+    public var gameStatus: BoardStatus
+
+    // MARK: -- Private variable's
+    private var playersList: [Player]!
+
+    private var movementsSequence: [Int]!
+
+    private var actualPlayerIndex: Int!
+
+    private var actualPlayer: Player {
+        get {
+            return playersList[actualPlayerIndex]
+        }
+    }
+
+    private var difficultLevel: DifficultLevel = DifficultLevel.hard
+
+    // MARK: -- Public function's
+    public init(boardSize: Int, playersList: [Player], difficultLevel: DifficultLevel) {
+        self.board = Board.init(size: boardSize)
+        self.playersList = playersList
+        self.difficultLevel = difficultLevel
+        self.gameStatus = BoardStatus.continues
+
+        self.generateMovementsSequence()
+        self.changeActualPlayer()
+    }
+
+    public func update() {
+        self.gameStatus = board.check(player: actualPlayer)
+
+        switch self.gameStatus {
+        case BoardStatus.continues:
+            changeActualPlayer()
+        case BoardStatus.draw:
+            changeActualPlayer()
+        default: break
+        }
+    }
+
+    public func playerMakeMove(selectedPosition: (row: Int, column: Int)) {
+        guard board.symbol(forPosition: selectedPosition) == PlayerSymbol.empty else { return }
+        guard board.hasEmptyField() == true else { return }
+
+        board.makeMove(player: actualPlayer, position: selectedPosition)
+        update()
+    }
+
+    public func makeMinimaxMove() {
+        guard actualPlayer.type == PlayerType.computer else { return }
+        guard board.hasEmptyField() == true else { return }
+
+        sleep(1)
+
+        let selectedPosition: Position = minimaxMove(board: board, player: playersList[0], opponent: playersList[1], depth: self.difficultLevel.rawValue)
+        board.makeMove(player: actualPlayer, position: selectedPosition)
+        update()
+    }
+
+    public func newRound() {
+        board.clear()
+        gameStatus = BoardStatus.continues
+        generateMovementsSequence()
+        changeActualPlayer()
+    }
+
+    // MARK: -- Private function's
+    private func generateMovementsSequence() {
+        self.movementsSequence = []
+
+        let playersCount = playersList.count
+        let movesCount = (board.size * board.size)
+
+        var move = Int.random(in: 0 ..< playersCount)
+        movementsSequence.append(move)
+
+        for _ in 0 ..< movesCount - 1 {
+            move += 1
+            movementsSequence.append(move % playersCount)
+        }
+    }
+
+    private func changeActualPlayer() {
+        if !movementsSequence.isEmpty {
+            actualPlayerIndex = movementsSequence.first!
+            movementsSequence.removeFirst()
+        }
+    }
+}
+
+```
+
+###### 미니맥스 (Minimax)
+
+게임 이론에서 사용되는 의사 결정 알고리즘으로, 상대방이 최선을 다한다는 가정하에 자신의 손실을 최소화합니다.
+
+**Gamestatevalue**
+
+```swift
+public enum GameStateValue: Int {
+
+    case min = -1
+
+    case null = 0
+
+    case max = 1
+}
+
+```
+
+**미니맥스 (Minimax)**
+
+게임 이론에서 사용되는 의사 결정 알고리즘으로, 상대방이 최선을 다한다는 가정하에 자신의 손실을 최소화합니다.
+
+```swift
+public func minimaxMove(board: Board, player: Player, opponent: Player, depth: Int) -> Position {
+    var bestVal = GameStateValue.min
+    var bestMoves: [Position] = []
+
+    for i in 0 ..< board.size {
+        for j in 0 ..< board.size {
+            if board.symbol(forPosition: Position(i, j)) == PlayerSymbol.empty {
+                var tempBoard = board
+                let move = Position(i, j)
+
+                tempBoard.makeMove(player: opponent, position: (i, j))
+                let moveVal = minMax(board: tempBoard, player: opponent, opponent: player,
+                                     depth: depth,
+                                     alpha: GameStateValue.min.rawValue, beta: GameStateValue.max.rawValue,
+                                     maximizingPlayer: false)
+
+                if moveVal.rawValue > bestVal.rawValue {
+                    bestVal = moveVal
+                    bestMoves = []
+                    bestMoves.append(move)
+                } else if moveVal == bestVal {
+                    bestMoves.append(move)
+                }
+            }
+        }
+    }
+
+    return bestMoves[Int.random(in: 0 ..< bestMoves.count)]
+}
+
+public func minMax(board: Board, player: Player, opponent: Player, depth: Int, alpha: Int, beta: Int, maximizingPlayer: Bool) -> GameStateValue {
+    var alpha = alpha
+    var beta = beta
+
+    if let gameResult = evaluateGameState(board: board, player: player, opponent: opponent) {
+        guard depth != 0 && gameResult != GameStateValue.min && gameResult != GameStateValue.max && gameResult != GameStateValue.null else {
+            return gameResult
+        }
+    }
+
+    if maximizingPlayer {
+        var maxEval = GameStateValue.min
+
+        for i in 0 ..< board.size {
+            for j in 0 ..< board.size {
+                if board.symbol(forPosition: Position(i, j)) == PlayerSymbol.empty {
+                    var tempBoard = board
+                    tempBoard.makeMove(player: player, position: Position(i, j))
+
+                    let eval = minMax(board: tempBoard, player: player, opponent: opponent, depth: depth - 1,
+                                      alpha: alpha, beta: beta,
+                                      maximizingPlayer: !maximizingPlayer)
+
+                    maxEval = GameStateValue(rawValue: max(maxEval.rawValue, eval.rawValue))!
+                    alpha = max(alpha, eval.rawValue)
+
+                    if beta <= alpha { break }
+                }
+            }
+        }
+
+        return maxEval
+    } else {
+        var minEval = GameStateValue.max
+
+        for i in 0 ..< board.size {
+            for j in 0 ..< board.size {
+                if board.symbol(forPosition: Position(i, j)) == PlayerSymbol.empty {
+                    var tempBoard = board
+                    tempBoard.makeMove(player: opponent, position: (i, j))
+
+                    let eval = minMax(board: tempBoard, player: player, opponent: opponent, depth: depth - 1,
+                                      alpha: alpha, beta: beta,
+                                      maximizingPlayer: !maximizingPlayer)
+
+                    minEval =  GameStateValue(rawValue: min(minEval.rawValue, eval.rawValue))!
+                    beta = min(beta, eval.rawValue)
+
+                    if beta <= alpha { break }
+                }
+            }
+        }
+
+        return minEval
+    }
+}
+
+public func evaluateGameState(board: Board, player: Player, opponent: Player) -> GameStateValue? {
+    if board.check(player: player) == BoardStatus.win {
+        return GameStateValue.max
+    } else if board.check(player: opponent) == BoardStatus.win {
+        return GameStateValue.min
+    } else if board.check(player: player) == BoardStatus.draw || board.check(player: opponent) == BoardStatus.draw {
+        return GameStateValue.null
+    }
+
+    return nil
+}
+
+```
+
+###### Player
+
+**Player**
+
+```swift
+public struct Player {
+    // MARK: -- Public variable's
+    public var type: PlayerType
+
+    public var symbol: PlayerSymbol
+
+    // MARK: -- Public function's
+    public init(type: PlayerType, symbol: PlayerSymbol) {
+        self.type = type
+        self.symbol = symbol
+    }
+}
+
+```
+
+**Playersymbol**
+
+```swift
+public enum PlayerSymbol: String {
+
+    case empty = ""
+
+    case circle = "⭕️"
+
+    case cross = "❌"
+}
+
+```
+
+**Playertype**
+
+```swift
+public enum PlayerType {
+
+    case computer
+
+    case human
+}
+
+```
+
+###### View
+
+**Boardview**
+
+```swift
+import UIKit
+
+public class BoardView: UIView {
+    // MARK: -- Public
+    public var gameModel: GameModel!
+
+    public var players = [Player(type: .human, symbol: .circle),
+                          Player(type: .computer, symbol: .cross)]
+
+    // MARK: -- Override's
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        self.setupBoard()
+        self.setupResetButton()
+        self.setupIndicator()
+        self.startGame()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
+    // MARK: -- Private
+    private var buttons: [UIButton] = []
+
+    private var stackView: UIStackView!
+
+    private var resetButton: UIButton!
+
+    private var indicator: UIActivityIndicatorView!
+
+    private func startGame() {
+        self.gameModel = GameModel.init(boardSize: 3, playersList: self.players, difficultLevel: .hard)
+
+        DispatchQueue.global(qos: .userInteractive).async {
+
+            self.blockViewForUser()
+
+            self.gameModel.makeMinimaxMove()
+
+            self.unblockViewForUser()
+        }
+    }
+
+    private func updateUI() {
+        if gameModel.gameStatus != BoardStatus.continues {
+            self.resetButton.setTitle("New game", for: .normal)
+            blockButtons()
+        } else {
+            self.resetButton.setTitle("Reset", for: .normal)
+        }
+        boardToButtons()
+    }
+
+    private func boardToButtons() {
+        var buttonIndex = 0
+
+        for row in 0 ..< 3 {
+            for column in 0 ..< 3 {
+                let symbol = gameModel.board.symbol(forPosition: Position(row, column))
+                if symbol != PlayerSymbol.empty {
+                    self.buttons[buttonIndex].setTitle(symbol?.rawValue, for: .normal)
+                    self.buttons[buttonIndex].isUserInteractionEnabled = false
+                }
+                buttonIndex += 1
+            }
+        }
+    }
+
+    private func setupBoard() {
+        self.stackView = UIStackView()
+        self.stackView.translatesAutoresizingMaskIntoConstraints = false
+        self.stackView.axis = .vertical
+        self.stackView.alignment = .fill
+        self.stackView.distribution = .fillEqually
+        self.stackView.spacing = 10
+
+        self.addSubview(self.stackView)
+
+        for index in 1 ... 3 {
+            let boardRow = self.createBoardRow(rowNumber: index)
+            self.stackView.addArrangedSubview(boardRow)
+        }
+
+        // constraints
+        let constraints = [
+            self.stackView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10),
+            self.stackView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            self.stackView.widthAnchor.constraint(equalTo: self.widthAnchor, constant: -20),
+            self.stackView.heightAnchor.constraint(equalTo: self.stackView.widthAnchor)
+        ]
+        NSLayoutConstraint.activate(constraints)
+    }
+
+    private func createBoardRow(rowNumber: Int) -> UIStackView {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10
+
+        for index in 1 ... 3 {
+            let button = UIButton()
+            let id = String(index + ( (rowNumber - 1) * 3 ) )
+            button.restorationIdentifier = id
+            button.backgroundColor = .lightGray
+            button.titleLabel?.font = UIFont(name: "Helvetica", size: 50)
+            button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
+
+            self.buttons.append(button)
+            stackView.addArrangedSubview(button)
+        }
+
+        return stackView
+    }
+
+    private func blockViewForUser() {
+        DispatchQueue.main.async {
+            self.resetButton.isHidden = true
+            self.indicator.isHidden = false
+            self.indicator.startAnimating()
+
+            self.blockButtons()
+            self.updateUI()
+        }
+    }
+
+    private func unblockViewForUser() {
+        DispatchQueue.main.async {
+            self.unblockButtons()
+            self.updateUI()
+
+            self.resetButton.isHidden = false
+            self.indicator.isHidden = true
+            self.indicator.stopAnimating()
+        }
+    }
+
+    @objc private func buttonPressed(_ sender: UIButton) {
+        let position = buttonIDtoPosition(id: sender.restorationIdentifier!)
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.gameModel.playerMakeMove(selectedPosition: position)
+
+            self.blockViewForUser()
+
+            self.gameModel.makeMinimaxMove()
+
+            self.unblockViewForUser()
+        }
+    }
+
+    private func setupResetButton() {
+        self.resetButton = UIButton(type: .system)
+        self.resetButton.translatesAutoresizingMaskIntoConstraints = false
+        self.resetButton.setTitle("Reset", for: .normal)
+        self.resetButton.backgroundColor = .lightGray
+        self.resetButton.addTarget(self, action: #selector(resetButtonPressed(_:)), for: .touchUpInside)
+
+        self.addSubview(self.resetButton)
+
+        // constraints
+        let constraints = [
+            self.resetButton.topAnchor.constraint(equalTo: self.stackView.bottomAnchor, constant: 10),
+            self.resetButton.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            self.resetButton.widthAnchor.constraint(equalTo: self.widthAnchor)
+        ]
+        NSLayoutConstraint.activate(constraints)
+    }
+
+    @objc private func resetButtonPressed(_ sender: UIButton) {
+        self.gameModel.newRound()
+        self.clearButtons()
+        self.startGame()
+    }
+
+    private func setupIndicator() {
+        self.indicator = UIActivityIndicatorView()
+        self.indicator.translatesAutoresizingMaskIntoConstraints = false
+        self.indicator.backgroundColor = .lightGray
+
+        self.addSubview(self.indicator)
+
+        // constraints
+        let constraints = [
+            self.indicator.topAnchor.constraint(equalTo: self.stackView.bottomAnchor, constant: 10),
+            self.indicator.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            self.indicator.widthAnchor.constraint(equalTo: self.widthAnchor)
+        ]
+        NSLayoutConstraint.activate(constraints)
+    }
+
+    private func buttonIDtoPosition(id: String) -> Position {
+        switch id {
+        case "1":
+            return Position(0, 0)
+        case "2":
+            return Position(0, 1)
+        case "3":
+            return Position(0, 2)
+        case "4":
+            return Position(1, 0)
+        case "5":
+            return Position(1, 1)
+        case "6":
+            return Position(1, 2)
+        case "7":
+            return Position(2, 0)
+        case "8":
+            return Position(2, 1)
+        case "9":
+            return Position(2, 2)
+        default:
+            return Position(0, 0)
+        }
+    }
+
+    private func clearButtons() {
+        for button in self.buttons {
+            button.setTitle("", for: .normal)
+            button.isUserInteractionEnabled = true
+        }
+    }
+
+    private func unblockButtons() {
+        for button in self.buttons {
+            button.isUserInteractionEnabled = true
+        }
+    }
+
+    private func blockButtons() {
+        for button in self.buttons {
+            button.isUserInteractionEnabled = false
+        }
+    }
+}
+
+```
+
+###### Playground.Xcworkspace
+
+###### Xcshareddata
+
+###### Tests
+
+###### Tests
+
+**Boardtests**
+
+```swift
+import XCTest
+
+class BoardTests: XCTestCase {
+
+    private var sut: Board!
+
+    private var boardSize = 3
+
+    override func setUp() {
+        super.setUp()
+        sut = Board(size: boardSize)
+    }
+
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
+
+    func testInit() {
+        XCTAssertEqual(sut.size, boardSize)
+        XCTAssertEqual(allFieldsAreEmpty(), true)
+    }
+
+    func testSymbolForPosition() {
+        let player = Player(type: .human, symbol: .circle)
+        let position = Position(0, 0)
+
+        sut.clear()
+        XCTAssertEqual(sut.symbol(forPosition: position), PlayerSymbol.empty)
+
+        sut.makeMove(player: player, position: position)
+        XCTAssertEqual(sut.symbol(forPosition: position), player.symbol)
+    }
+
+    func testClear() {
+        let player = Player(type: .computer, symbol: .circle)
+        let position = Position(0, 0)
+
+        sut.makeMove(player: player, position: position)
+
+        XCTAssertEqual(allFieldsAreEmpty(), false)
+
+        sut.clear()
+
+        XCTAssertEqual(allFieldsAreEmpty(), true)
+    }
+
+    func testHasEmptyField() {
+        let player = Player(type: .computer, symbol: .circle)
+
+        sut.clear()
+
+        XCTAssertEqual(sut.hasEmptyField(), true)
+
+        sut.makeMove(player: player, position: Position(0, 0))
+        sut.makeMove(player: player, position: Position(0, 1))
+        sut.makeMove(player: player, position: Position(0, 2))
+
+        sut.makeMove(player: player, position: Position(1, 0))
+        sut.makeMove(player: player, position: Position(1, 1))
+        sut.makeMove(player: player, position: Position(1, 2))
+
+        sut.makeMove(player: player, position: Position(2, 0))
+        sut.makeMove(player: player, position: Position(2, 1))
+        sut.makeMove(player: player, position: Position(2, 2))
+
+        XCTAssertEqual(sut.hasEmptyField(), false)
+    }
+
+    func testMakeMove() {
+        let firstPlayer = Player(type: .human, symbol: .circle)
+        let secondPlayer = Player(type: .human, symbol: .cross)
+        let position = Position(0, 0)
+
+        sut.clear()
+        sut.makeMove(player: firstPlayer, position: position)
+        sut.makeMove(player: secondPlayer, position: position)
+
+        XCTAssertEqual(sut.symbol(forPosition: position), firstPlayer.symbol)
+    }
+
+    func testCheck() {
+        let firstPlayer = Player(type: .computer, symbol: .circle)
+        let secondPlayer = Player(type: .computer, symbol: .cross)
+
+        sut.clear()
+
+        XCTAssertEqual(sut.check(player: firstPlayer), BoardStatus.continues)
+        XCTAssertEqual(sut.check(player: secondPlayer), BoardStatus.continues)
+
+        sut.clear()
+        sut.makeMove(player: firstPlayer, position: Position(0, 0))
+        sut.makeMove(player: firstPlayer, position: Position(0, 1))
+        sut.makeMove(player: firstPlayer, position: Position(0, 2))
+
+        XCTAssertEqual(sut.check(player: firstPlayer), BoardStatus.win)
+        XCTAssertEqual(sut.check(player: secondPlayer), BoardStatus.continues)
+
+        sut.clear()
+        sut.makeMove(player: firstPlayer, position: Position(0, 0))
+        sut.makeMove(player: firstPlayer, position: Position(1, 0))
+        sut.makeMove(player: firstPlayer, position: Position(2, 0))
+
+        XCTAssertEqual(sut.check(player: firstPlayer), BoardStatus.win)
+        XCTAssertEqual(sut.check(player: secondPlayer), BoardStatus.continues)
+
+        sut.clear()
+        sut.makeMove(player: firstPlayer, position: Position(0, 0))
+        sut.makeMove(player: firstPlayer, position: Position(1, 1))
+        sut.makeMove(player: firstPlayer, position: Position(2, 2))
+
+        XCTAssertEqual(sut.check(player: firstPlayer), BoardStatus.win)
+        XCTAssertEqual(sut.check(player: secondPlayer), BoardStatus.continues)
+
+        sut.clear()
+        sut.makeMove(player: firstPlayer, position: Position(0, 0))
+        sut.makeMove(player: secondPlayer, position: Position(0, 1))
+        sut.makeMove(player: secondPlayer, position: Position(0, 2))
+
+        sut.makeMove(player: secondPlayer, position: Position(1, 0))
+        sut.makeMove(player: firstPlayer, position: Position(1, 1))
+        sut.makeMove(player: firstPlayer, position: Position(1, 2))
+
+        sut.makeMove(player: secondPlayer, position: Position(2, 0))
+        sut.makeMove(player: firstPlayer, position: Position(2, 1))
+        sut.makeMove(player: secondPlayer, position: Position(2, 2))
+
+        XCTAssertEqual(sut.check(player: firstPlayer), BoardStatus.draw)
+        XCTAssertEqual(sut.check(player: secondPlayer), BoardStatus.draw)
+    }
+
+    private func allFieldsAreEmpty() -> Bool {
+        var allFieldAreEmpty = true
+
+        for row in 0 ..< sut.size {
+            for column in 0 ..< sut.size {
+                if sut.symbol(forPosition: Position(row, column)) != PlayerSymbol.empty {
+                    allFieldAreEmpty = false
+                }
+            }
+        }
+
+        return allFieldAreEmpty
+    }
+}
+
+```
+
+**Minimaxtests**
+
+```swift
+import XCTest
+
+class MinimaxTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+    }
+
+    func testEvaluateGameState() {
+        var board = Board(size: 3)
+        let firstPlayer = Player(type: .human, symbol: .cross)
+        let secondPlayer = Player(type: .human, symbol: .circle)
+
+        board.clear()
+
+        XCTAssertEqual(evaluateGameState(board: board, player: firstPlayer, opponent: secondPlayer), nil)
+
+        board.makeMove(player: firstPlayer, position: Position(0, 0))
+
+        XCTAssertEqual(evaluateGameState(board: board, player: firstPlayer, opponent: secondPlayer), nil)
+
+        board.makeMove(player: firstPlayer, position: Position(0, 1))
+        board.makeMove(player: firstPlayer, position: Position(0, 2))
+
+        XCTAssertEqual(evaluateGameState(board: board, player: firstPlayer, opponent: secondPlayer), .max)
+        XCTAssertEqual(evaluateGameState(board: board, player: secondPlayer, opponent: firstPlayer), .min)
+
+        board.clear()
+        board.makeMove(player: secondPlayer, position: Position(0, 0))
+        board.makeMove(player: secondPlayer, position: Position(0, 1))
+        board.makeMove(player: secondPlayer, position: Position(0, 2))
+        board.makeMove(player: firstPlayer, position: Position(1, 0))
+
+        XCTAssertEqual(evaluateGameState(board: board, player: firstPlayer, opponent: secondPlayer), .min)
+        XCTAssertEqual(evaluateGameState(board: board, player: secondPlayer, opponent: firstPlayer), .max)
+
+        board.clear()
+        board.makeMove(player: firstPlayer, position: Position(0, 0))
+        board.makeMove(player: secondPlayer, position: Position(0, 1))
+        board.makeMove(player: secondPlayer, position: Position(0, 2))
+
+        board.makeMove(player: secondPlayer, position: Position(1, 0))
+        board.makeMove(player: firstPlayer, position: Position(1, 1))
+        board.makeMove(player: firstPlayer, position: Position(1, 2))
+
+        board.makeMove(player: secondPlayer, position: Position(2, 0))
+        board.makeMove(player: firstPlayer, position: Position(2, 1))
+        board.makeMove(player: secondPlayer, position: Position(2, 2))
+
+        XCTAssertEqual(evaluateGameState(board: board, player: firstPlayer, opponent: secondPlayer), .null)
+        XCTAssertEqual(evaluateGameState(board: board, player: secondPlayer, opponent: firstPlayer), .null)
+    }
+}
+
+```
+
+**Playertests**
+
+```swift
+import XCTest
+
+class PlayerTests: XCTestCase {
+
+    private var sut: Player!
+
+    private var playerType: PlayerType = .human
+
+    private var playerSymbol: PlayerSymbol = .circle
+
+    override func setUp() {
+        super.setUp()
+        sut = Player(type: playerType, symbol: playerSymbol)
+    }
+
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
+
+    func testInit() {
+        XCTAssertEqual(sut.type, playerType)
+        XCTAssertEqual(sut.symbol, playerSymbol)
+    }
+}
+
+```
+
+###### Tests.Xcodeproj
+
+###### Project.Xcworkspace
+
+###### Xcshareddata
+
+### 변환 (Conversion)
+
+데이터 형식이나 진법 등을 변환하는 알고리즘들입니다.
+
+**2진수 -> 10진수**
+
+2진수(Binary) 문자열을 10진수(Decimal) 숫자로 변환합니다.
+
+```swift
+import Foundation
+
+/// This function accepts a binary number as String and converts it to decimal as Int. 
+/// If it's not valid binary number (a.k.a not made only from digits), it returns nil.
+public func convertBinaryToDecimal(binary: String) -> Int? {
+    if let _ = Int(binary) {
+        var decimal = 0
+
+        let digits = binary.map { Int(String($0))! }.reversed()
+        print(digits)
+        var power = 1
+
+        for digit in digits {
+            decimal += digit * power
+
+            power *= 2
+        }
+
+        return decimal
+    }
+
+    return nil
+}
+```
+
+**10진수 -> 2진수**
+
+10진수(Decimal) 숫자를 2진수(Binary) 문자열로 변환합니다.
+
+```swift
+/// This function accepts a non-negative number and returns its binary form as String.
+public func convertDecimalToBinary(decimal: Int) -> String {
+    var binary = ""
+    var decimal = decimal
+
+    while decimal != 0 {
+        binary.insert(decimal % 2 == 0 ? "0" : "1", at: binary.startIndex)
+        decimal /= 2
+    }
+
+    return binary
+}
+```
+
+### 팰린드롬 (Palindrome)
+
+앞으로 읽으나 뒤로 읽으나 똑같은 문자열을 의미합니다. 예: 'level', 'noon'
+
+**팰린드롬 인덱스**
+
+문자열 내에서 팰린드롬을 형성하는 문자의 인덱스를 찾습니다.
+
+```swift
+// A palindrome is a string that reads the same forwards and backwards.
+//
+// Examples: "level", "radar", "madam", "A man, a plan, a canal: Panama".
+
+extension String {
+    
+    /// Iteratively comparing characters from the beginning and end of the string. Only include letters and numbers.
+    /// - Complexity: O(n), without allocating new space.
+    func isPalindrome() -> Bool {
+        var leftIndex = startIndex
+        var rightIndex = index(before: endIndex)
+        
+        while leftIndex < rightIndex {
+            guard self[leftIndex].isLetter || self[leftIndex].isNumber else {
+                leftIndex = index(after: leftIndex)
+                continue
+            }
+            guard self[rightIndex].isLetter || self[rightIndex].isNumber else {
+                rightIndex = index(before: rightIndex)
+                continue
+            }
+            guard self[leftIndex].lowercased() == self[rightIndex].lowercased() else {
+                return false
+            }
+            
+            leftIndex = index(after: leftIndex)
+            rightIndex = index(before: rightIndex)
+        }
+        
+        return true
+    }
+}
+
+```
+
+**재귀적 팰린드롬 확인**
+
+재귀 호출을 사용하여 문자열이 팰린드롬인지 확인합니다.
+
+```swift
+// A palindrome is a string that reads the same forwards and backwards.
+//
+// Examples: "level", "radar", "madam", "A man, a plan, a canal: Panama".
+
+extension String {
+    
+    /// Recursively comparing characters from the beginning and end of the string. Only include letters and numbers.
+    /// - Complexity: O(n), without allocating new space.
+    func isPalindrome() -> Bool {
+        isPalindromeRecursion(
+            leftIndex: startIndex,
+            rightIndex: index(before: endIndex)
+        )
+    }
+    
+    private func isPalindromeRecursion(
+        leftIndex: String.Index,
+        rightIndex: String.Index
+    ) -> Bool {
+        guard leftIndex < rightIndex else {
+            return true
+        }
+        guard self[leftIndex].isLetter || self[leftIndex].isNumber else {
+            return isPalindromeRecursion(
+                leftIndex: index(after: leftIndex),
+                rightIndex: rightIndex
+            )
+        }
+        guard self[rightIndex].isLetter || self[rightIndex].isNumber else {
+            return isPalindromeRecursion(
+                leftIndex: leftIndex,
+                rightIndex: index(before: rightIndex)
+            )
+        }
+        guard self[leftIndex].lowercased() == self[rightIndex].lowercased() else {
+            return false
+        }
+        
+        return isPalindromeRecursion(
+            leftIndex: index(after: leftIndex),
+            rightIndex: index(before: rightIndex)
+        )
+    }
+}
+
+```
+
+**문자열 뒤집기 팰린드롬**
+
+문자열을 뒤집어서 원본과 비교하여 팰린드롬 여부를 확인합니다.
+
+```swift
+// A palindrome is a string that reads the same forwards and backwards.
+//
+// Examples: "level", "radar", "madam", "A man, a plan, a canal: Panama".
+
+extension String {
+    
+    /// Using the `reverse()` method to reverse the string and comparing it with the original. Only include letters and numbers.
+    /// - Complexity: O(n), with allocating O(n) space.
+    func isPalindrome() -> Bool {
+        let input = lowercased().filter { $0.isLetter || $0.isNumber }
+        return input == String(input.reversed())
+    }
+}
+
+```
+
+### 파싱 (Parsing)
+
+데이터를 분해하고 분석하여 원하는 구조로 변환하는 과정입니다.
+
+#### 션팅 야드 알고리즘
+
+중위 표기법 수식을 후위 표기법(Reverse Polish Notation)으로 변환하는 알고리즘입니다.
+
+**션팅 야드 알고리즘**
+
+중위 표기법 수식을 후위 표기법(Reverse Polish Notation)으로 변환하는 알고리즘입니다.
+
+```swift
+import Foundation
+
+enum ShuntingYard {
+    enum Operator: String, CaseIterable {
+        case power = "^"
+        case plus = "+"
+        case minus = "-"
+        case times = "*"
+        case divide = "/"
+    }
+
+    static func evaluate(_ string: String) -> Double {
+        let scanner = Scanner(string: string)
+        var numberStack: [Double] = []
+        var operatorStack: [Operator] = []
+
+        func applyOperator(_ op: Operator) {
+            guard let a = numberStack.popLast(), let b = numberStack.popLast() else {
+                return
+            }
+
+            numberStack.append(op.apply(a, b))
+        }
+
+        while !scanner.isAtEnd {
+            if let op = scanner.scanOperator() {
+                while let last = operatorStack.last, last.precedence > op.precedence || (op.leftAssociative && last.precedence == op.precedence) {
+                    applyOperator(last)
+                    operatorStack.removeLast()
+                }
+                operatorStack.append(op)
+            } else if let number = scanner.scanDouble() {
+                numberStack.append(number)
+            } else {
+                break
+            }
+        }
+
+        while let op = operatorStack.popLast() {
+            applyOperator(op)
+        }
+
+        return numberStack.first ?? 0
+    }
+}
+
+extension ShuntingYard.Operator {
+    var precedence: Int {
+        switch self {
+        case .power: return 3
+        case .divide, .times: return 2
+        case .plus, .minus: return 1
+        }
+    }
+
+    var leftAssociative: Bool {
+        switch self {
+        case .power: return false
+        case .plus, .minus, .times, .divide: return true
+        }
+    }
+
+    func apply(_ a: Double, _ b: Double) -> Double {
+        switch self {
+        case .power: return pow(b, a)
+        case .divide: return b / a
+        case .times: return a * b
+        case .plus: return a + b
+        case .minus: return b - a
+        }
+    }
+}
+
+private extension Scanner {
+    func scanOperator() -> ShuntingYard.Operator? {
+        for op in ShuntingYard.Operator.allCases {
+            if scanString(op.rawValue) != nil {
+                return op
+            }
+        }
+        return nil
+    }
+}
+
+func testShuntingYard() {
+    func test(_ x: String) {
+        print(x,"=", ShuntingYard.evaluate(x))
+    }
+
+    test("3 + 4 * 5")
+    test("4 * 5 + 3")
+    test("2 ^ 3 ^ 4")
+    test("10.5 - 4 * 5")
+    test("2 + 3 ^ 4")
+    test("2 * 3 ^ 4")
+    test("3 ^ 4")
+}
+
+```
+

@@ -1,0 +1,31 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Swift Algorithms"
+  navbar:
+    left:
+      - href: index.qmd
+        text: 홈
+      - href: algorithms.qmd
+        text: 알고리즘
+      - href: data_structures.qmd
+        text: 자료구조
+      - href: graph.qmd
+        text: 그래프
+      - href: recursion.qmd
+        text: 재귀
+      - href: search.qmd
+        text: 검색
+      - href: sorts.qmd
+        text: 정렬
+      - href: trees.qmd
+        text: 트리
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-title: 목차

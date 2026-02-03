@@ -1,0 +1,661 @@
+---
+title: "자료구조"
+---
+
+### Linked List
+
+**연결 리스트**
+
+데이터와 다음 노드를 가리키는 포인터를 포함하는 선형 자료구조입니다.
+
+```swift
+import Foundation
+
+public class Node<Value> {
+    public var value: Value?
+    public var next: Node?
+    
+    public init(value: Value? = nil, next: Node<Value>? = nil) {
+        self.value = value
+        self.next = next
+    }
+}
+
+extension Node: CustomStringConvertible {
+    public var description: String {
+        guard let next = next else {
+            return "\(String(describing: value))"
+        }
+        return "\(String(describing: value)) -> " + String(describing: next) + " "
+    }
+}
+
+public struct LinkedList<Value> {
+    
+    public var head: Node<Value>?
+    public var tail: Node<Value>?
+    
+    public init() {}
+    
+    public var isEmpty: Bool {
+        return head == nil
+    }
+    public mutating func push(_ value: Value) {
+        head = Node(value: value, next: head)
+        
+        if tail == nil {
+            tail = head
+        }
+    }
+    
+    public mutating func append(_ value: Value) {
+        guard !isEmpty else {
+            push(value)
+            return
+        }
+        
+        tail!.next = Node(value: value)
+        
+        tail = tail!.next
+    }
+
+    public func node(at index: Int) -> Node<Value>? {
+        var currentNode = head
+        var currentIndex = 0
+        
+        while currentNode != nil && currentIndex < index {
+            currentNode = currentNode!.next
+            currentIndex += 1
+        }
+        
+        return currentNode
+    }
+
+    @discardableResult
+    public mutating func insert(_ value: Value,
+                                after node: Node<Value>) -> Node<Value> {
+        guard tail !== node else {
+          append(value)
+          return tail!
+        }
+        node.next = Node(value: value, next: node.next)
+        
+        return node.next!
+    }
+    
+    @discardableResult
+    public mutating func pop() -> Value? {
+        defer {
+            head = head?.next
+            if isEmpty {
+                tail = nil
+            }
+        }
+        return head?.value
+    }
+    
+    @discardableResult
+    public mutating func removeLast() -> Value? {
+      guard let head = head else {
+    return nil
+    }
+      guard head.next != nil else {
+        return pop()
+      }
+      var prev = head
+      var current = head
+      while let next = current.next {
+        prev = current
+        current = next
+      }
+      prev.next = nil
+      tail = prev
+      return current.value
+    }
+    
+    @discardableResult
+    public mutating func remove(after node: Node<Value>) -> Value? {
+      defer {
+        if node.next === tail {
+          tail = node 
+        }
+        node.next = node.next?.next
+      }
+      return node.next?.value
+    }
+}
+
+extension LinkedList: CustomStringConvertible {
+    public var description: String {
+        guard let head = head else {
+          return "Empty list"
+        }
+        return String(describing: head)
+      }
+}
+
+// Below you can find a testing Scenario for Playground.
+
+/*
+ import UIKit
+
+ // Test Linked List
+
+ let node1 = Node(value: 1)
+ let node2 = Node(value: 2)
+ let node3 = Node(value: 3)
+
+ node1.next = node2
+ node2.next = node3
+
+ print(node1)
+
+ var list = LinkedList<Int>()
+ list.push(3)
+ list.push(2)
+ list.push(1)
+
+ print(list)
+
+ var listAppend = LinkedList<Int>()
+
+ listAppend.append(1)
+ listAppend.append(2)
+ listAppend.append(3)
+
+ print(listAppend)
+ */
+
+```
+
+### 스택 (Stack)
+
+나중에 들어온 데이터가 먼저 나가는(LIFO) 선형 자료구조입니다.
+
+**스택 (Stack)**
+
+나중에 들어온 데이터가 먼저 나가는(LIFO) 선형 자료구조입니다.
+
+```swift
+import Foundation
+
+public struct Stack<T> {
+    private var elements = [T]()
+    
+    public mutating func push(_ element: T) {
+        elements.append(element)
+    }
+    
+    public mutating func pop() -> T? {
+        return elements.popLast()
+    }
+    
+    public var isEmpty: Bool {
+        return elements.isEmpty
+    }
+    
+    public var count: Int {
+        return elements.count
+    }
+    
+    public var peek: T? {
+        return elements.last
+    }
+}
+
+// The code below can be used for testing
+
+var stack = Stack<Int>()
+
+stack.push(10)
+stack.push(20)
+stack.push(30)
+
+print(stack.count)
+print(stack.peek)
+print(stack.isEmpty)
+
+print(stack.pop())
+print(stack.pop())
+print(stack.pop())
+print(stack.isEmpty)
+print(stack.count)
+
+```
+
+### Doubly Linked List
+
+**이중 연결 리스트**
+
+각 노드가 선행 노드와 후속 노드에 대한 링크를 모두 가지고 있는 연결 리스트입니다. 양방향 순회가 가능합니다.
+
+```swift
+import Foundation
+
+public class Node<Value> {
+    public var value: Value?
+    public var next: Node?
+    public var prev: Node?
+    
+    public init(value: Value? = nil, next: Node<Value>? = nil, prev: Node<Value>? = nil) {
+        self.value = value
+        self.next = next
+        self.prev = prev
+    }
+}
+
+extension Node: CustomStringConvertible {
+    public var description: String {
+        guard let next: Node<Value> = self.next else {
+            return "\(String(describing: value))"
+        }
+        return "\(String(describing: value)) <-> \(String(describing: next)) "
+    }
+}
+
+public struct DoublyLinkedList<Value> {
+    
+    public var head: Node<Value>?
+    public var tail: Node<Value>?
+    public var count: Int = 0
+    
+    public var isEmpty: Bool {
+        return head == nil
+    }
+
+    public mutating func push(_ value: Value) {
+        let new: Node<Value> = Node(value: value, next: head)
+        if head != nil { head!.prev = new }
+        head = new
+        if tail == nil { tail = head }
+        count += 1
+    }
+    
+    public mutating func append(_ value: Value) {
+        guard !isEmpty else {
+            push(value)
+            return
+        }
+        tail!.next = Node(value: value, prev: tail)
+        tail = tail!.next
+        count += 1
+    }
+
+    @discardableResult
+    public mutating func insert(_ value: Value,
+                                after node: Node<Value>) -> Node<Value> {
+        guard tail !== node else {
+            append(value)
+            return tail!
+        }
+        var new: Node<Value> = Node(value: value, next: node.next, prev: node)
+        node.next?.prev = new
+        node.next = new
+        count += 1
+        return node.next!
+    }
+
+    @discardableResult
+    public mutating func insert(_ value: Value,
+                                before node: Node<Value>) -> Node<Value> {
+        guard head !== node else {
+            push(value)
+            return head!
+        }
+        var new: Node<Value> = Node(value: value, next: node, prev: node.prev)
+        node.prev?.next = new
+        node.prev = new
+        count += 1
+        return node.prev!
+    }
+
+    public func node(at index: Int) -> Node<Value>? {
+        guard index > -1 || index < count else { return nil }
+        
+        let startFromTail: Bool = index > count / 2
+        var currentNode: Node<Value>? = startFromTail ? tail : head
+        var currentIndex: Int = startFromTail ? count - 1 : 0
+        var change: Int = startFromTail ? -1 : 1
+        
+        while currentNode != nil {
+            if currentIndex == index { break }
+            currentNode = startFromTail ? currentNode!.prev : currentNode!.next
+            currentIndex += change
+        }
+        
+        return currentNode
+    }
+    
+    @discardableResult
+    public mutating func pop() -> Value? {
+        defer {
+            head = head?.next
+            count -= 1
+            if isEmpty {
+                tail = nil
+            } else {
+                head!.prev = nil
+            }
+        }
+        return head?.value
+    }
+    
+    @discardableResult
+    public mutating func removeLast() -> Value? {
+        defer {
+            tail = tail?.prev
+            count -= 1
+            if isEmpty {
+                head = nil
+            } else {
+                tail!.next = nil
+            }
+        }
+        return tail?.value
+    }
+    
+    @discardableResult
+    public mutating func remove(after node: Node<Value>) -> Value? {
+        defer {
+            if node.next != nil {
+                count -= 1
+            }
+            if node.next === tail {
+                tail = node
+            }
+            if let next2node: Node<Value> = node.next?.next {
+                next2node.prev = node
+            }
+            node.next = node.next?.next
+        }
+        return node.next?.value
+    }
+
+    @discardableResult
+    public mutating func remove(before node: Node<Value>) -> Value? {
+        defer {
+            if node.prev != nil {
+                count -= 1
+            }
+            if node.prev === head {
+                head = node
+            }
+            if let prev2node: Node<Value> = node.prev?.prev {
+                prev2node.next = node
+            }
+            node.prev = node.prev?.prev
+        }
+        return node.prev?.value
+    }
+}
+
+extension DoublyLinkedList: CustomStringConvertible {
+    public var description: String {
+        guard let head: Node<Value> = self.head else {
+          return "Empty list"
+        }
+        return String(describing: head)
+      }
+}
+
+// Here are testing scenarios to run in a Swift playground
+
+/*
+var list = DoublyLinkedList<Int>()
+
+list.push(4)
+list.push(2)
+list.push(1)
+
+list.append(6)
+
+var n = list.node(at: 2)
+
+list.insert(5, after: n!)
+list.insert(3, before: n!)
+
+print(list)
+
+print(list.pop()!)
+print(list.removeLast()!)
+
+print(list.remove(after: n!)!)
+print(list.remove(before: n!)!)
+
+print(list.count)
+*/
+
+```
+
+### 힙 (Heap)
+
+최대값이나 최소값을 빠르게 찾아내기 위해 고안된 완전 이진 트리 기반의 자료구조입니다.
+
+**힙 (Heap)**
+
+최대값이나 최소값을 빠르게 찾아내기 위해 고안된 완전 이진 트리 기반의 자료구조입니다.
+
+```swift
+struct Heap<Element> {
+    let compare: (Element, Element) -> Bool
+    private var items : [Element]
+
+    init(_ items : [Element], compare: @escaping (Element, Element) -> Bool) {
+        self.compare = compare
+        self.items = items
+        for index in (0 ..< count / 2).reversed() {
+            heapify(index)
+        }
+    }
+
+    /// The minimum item on this heap or nil if the heap is empty
+    var min: Element? {
+        return items.first
+    }
+
+    /// The number of items on this heap
+    var count: Int {
+        return items.count
+    }
+
+    /// true if this heap is empty
+    var isEmpty: Bool {
+        return items.isEmpty
+    }
+
+    /// Removes and returns the minimum item from the heap.
+    /// - returns: The minimum item from the heap or nil if the heap is empty.
+    mutating func extractMin() -> Element? {
+        guard let result = items.first else { return nil }
+
+        items.removeFirst()
+        heapify(0)
+        return result
+
+    }
+
+    /// Inserts a new item into this heap
+    /// - parameter item: The new item to insert
+    mutating func insert(item : Element) {
+        items.append(item)
+        var i = items.count - 1
+        while i > 0 && compare(items[i], items[parent(i)]) {
+            items.swapAt(i, parent(i))
+            i = parent(i)
+        }
+    }
+
+    /// Restores the heap property starting at a given index
+    /// - parameter index: The index to start at
+    private mutating func heapify(_ index : Int) {
+        var minimumIndex = index
+        if left(index) < count && compare(items[left(index)], items[minimumIndex]) {
+            minimumIndex = left(index)
+        }
+
+        if right(index) < count && compare(items[right(index)], items[minimumIndex]) {
+            minimumIndex = right(index)
+        }
+
+        if minimumIndex != index {
+            items.swapAt(minimumIndex, index)
+            heapify(minimumIndex)
+        }
+    }
+
+    /// Returns the index of the left child of an item
+    private func left(_ index : Int) -> Int {
+        return 2 * index + 1
+    }
+
+    /// Returns the index of the right child of an item
+    private func right(_ index: Int) -> Int {
+        return 2 * index + 2
+    }
+
+    /// Returns the index of the parent of an item
+    private func parent(_ index: Int) -> Int {
+        return (index - 1) / 2
+    }
+}
+
+
+extension Heap: ExpressibleByArrayLiteral where Element: Comparable {
+    init(arrayLiteral elements: Element...) {
+        self.init(elements, compare: <)
+    }
+
+    init(_ elements: [Element]) {
+        self.init(elements, compare: <)
+    }
+}
+
+```
+
+### 큐 (Queue)
+
+먼저 들어온 데이터가 먼저 나가는(FIFO) 선형 자료구조입니다.
+
+**큐 (Queue)**
+
+먼저 들어온 데이터가 먼저 나가는(FIFO) 선형 자료구조입니다.
+
+```swift
+// Create simple queue
+// Tejas Nanaware
+
+struct Queue<T> {
+  private var elements: [T] = []
+
+  mutating func push(_ value: T) {
+    elements.append(value)
+  }
+
+  mutating func pop() -> T? {
+    guard !elements.isEmpty else { 
+      return nil
+    }
+    return elements.removeFirst()
+  }
+}
+
+var queue = Queue<String>()
+
+queue.push("One")
+queue.push("Two")
+queue.push("Three")
+
+print(queue.pop())
+print(queue)
+print(queue.pop())
+print(queue)
+print(queue.pop())
+print(queue)
+
+```
+
+### 유니온 파인드 (Union-Find)
+
+서로소 집합(Disjoint Set)을 관리하는 자료구조로, 합집합(Union) 연산과 찾기(Find) 연산을 지원합니다.
+
+**유니온 파인드 (Union-Find)**
+
+서로소 집합(Disjoint Set)을 관리하는 자료구조로, 합집합(Union) 연산과 찾기(Find) 연산을 지원합니다.
+
+```swift
+class UnionFindNode {
+    var rank = 0
+
+    private var parent: UnionFindNode? = nil
+
+    func findRoot() -> UnionFindNode {
+        var x = self
+        while let parent = x.parent {
+            x.parent = parent.parent ?? parent
+            x = parent
+        }
+        return x
+    }
+
+    @discardableResult
+    static func union(_ x: UnionFindNode, _ y: UnionFindNode) -> UnionFindNode {
+        var x = x.findRoot()
+        var y = y.findRoot()
+
+        guard x !== y else { return x }
+
+        if x.rank < y.rank {
+            swap(&x, &y)
+        }
+
+        y.parent = x
+        if x.rank == y.rank {
+            x.rank = y.rank + 1
+        }
+        
+        return x
+    }
+
+    static func inSameSet(_ x: UnionFindNode, _ y: UnionFindNode) -> Bool {
+        return x.findRoot() === y.findRoot()
+    }
+}
+
+
+func testUnionFind() {
+    let a = UnionFindNode()
+    let b = UnionFindNode()
+    let c = UnionFindNode()
+
+    print("a, b", UnionFindNode.inSameSet(a, b))
+    print("b, c", UnionFindNode.inSameSet(b, c))
+    print("a, c", UnionFindNode.inSameSet(a, c))
+
+    print("Joining a, b")
+
+    UnionFindNode.union(a, b)
+    print("a, b", UnionFindNode.inSameSet(a, b))
+    print("b, c", UnionFindNode.inSameSet(b, c))
+    print("a, c", UnionFindNode.inSameSet(a, c))
+
+    print("Joining b, c")
+
+    UnionFindNode.union(b, c)
+    print("a, b", UnionFindNode.inSameSet(a, b))
+    print("b, c", UnionFindNode.inSameSet(b, c))
+    print("a, c", UnionFindNode.inSameSet(a, c))
+
+
+    print("New node d")
+    let d = UnionFindNode()
+
+    print("a, d", UnionFindNode.inSameSet(a, d))
+
+    print("Joining d, c")
+    UnionFindNode.union(d, c)
+    print("a, d", UnionFindNode.inSameSet(a, d))
+
+}
+
+```
+

@@ -1,0 +1,65 @@
+---
+title: "검색"
+---
+
+**이진 검색**
+
+정렬된 리스트에서 검색 범위를 절반씩 줄여나가며 값을 찾는 효율적인 알고리즘입니다.
+
+```swift
+import Foundation
+
+public func binarySearch<T: Comparable>(_ a: [T], key: T) -> Int? {
+    var lowerBound = 0
+    var upperBound = a.count
+    while lowerBound < upperBound {
+        let midIndex = lowerBound + (upperBound - lowerBound) / 2
+        if a[midIndex] == key {
+            return midIndex
+        } else if a[midIndex] < key {
+            lowerBound = midIndex + 1
+        } else {
+            upperBound = midIndex
+        }
+    }
+    return nil
+}
+// The code below can be used for testing
+
+// var numbers = [7, 10, 13, 17, 19, 24, 29, 31, 32, 37, 41, 43, 47, 51, 53, 119, 163, 611, 627]
+// if let searchIndex = binarySearch(numbers, key: 10) {
+//     print("Element found on index: \(searchIndex)")
+// }
+// else {
+// print("Element not found")
+// }
+
+
+```
+
+**선형 검색**
+
+리스트의 처음부터 끝까지 하나씩 확인하며 원하는 값을 찾는 가장 단순한 검색 방법입니다.
+
+```swift
+import Foundation
+
+func linearSearch<T: Equatable>(_ array: [T], _ object: T) -> Int? {
+  for (index, obj) in array.enumerated() where obj == object {
+    return index
+  }
+  return nil
+}
+
+// The code below can be used for testing
+
+// var numbers = [10, 119, 13, 24, 53, 17, 31, 7, 19, 627, 47, 163, 37, 611, 29, 43, 51, 41, 32]
+// if let searchIndex = linearSearch(numbers,31) {
+//     print("Element found on index: \(searchIndex)")
+// }
+// else {
+// print("Element not found")
+// }
+
+```
+
